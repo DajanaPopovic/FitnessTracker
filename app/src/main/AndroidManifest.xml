@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ===== DOZVOLE ===== -->
+
+    <!-- Precizna GPS lokacija (za praćenje rute i udaljenosti) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Približna lokacija (fallback / brže dobijanje pozicije) -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Neophodno da bi foreground servis mogao da radi dok je app u pozadini -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Od API 34, foreground servis mora deklarisati TIP servisa -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+
+    <!-- Notifikacije (podsjetnici + notifikacija foreground servisa) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Internet i mrežni status - potrebno za Google Maps prikaz -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- WorkManager (podsjetnici) treba ovo za pouzdano zakazivanje nakon restarta uređaja -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- Deklariše da app KORISTI GPS hardver, ali nije obavezan (required=false),
+         tako da app može da se instalira i na uređajima bez GPS-a (npr. tablet samo sa WiFi-jem) -->
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="false" />
+
+    <application
+        android:name=".FitnessTrackerApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.FitnessTracker">
+
+        <!-- ===== GOOGLE MAPS API KLJUČ ===== -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- ===== FOREGROUND SERVIS ZA PRAĆENJE AKTIVNOSTI ===== -->
+        <!-- exported="false" jer samo naša aplikacija smije da ga pokreće -->
+        <service
+            android:name=".tracking.ActivityTrackingService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+
+
+    </application>
+
+
+
+</manifest>
